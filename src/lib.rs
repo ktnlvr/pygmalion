@@ -1,5 +1,8 @@
 mod draw;
 
+pub type Vec2 = Vector2<i32>;
+
+use mint::Vector2;
 pub use pixels;
 
 pub mod window {
@@ -10,7 +13,7 @@ pub mod window {
 pub use draw::*;
 
 mod misc {
-    use pixels::{PixelsBuilder, SurfaceTexture};
+    use pixels::{Pixels, PixelsBuilder, SurfaceTexture};
     use winit::{
         dpi::LogicalSize,
         event::Event,
@@ -22,7 +25,7 @@ mod misc {
     const WIDTH: u32 = 320;
     const HEIGHT: u32 = 240;
     
-    pub fn run_window(event_callback: impl Fn(&mut WinitInputHelper, &mut ControlFlow) + 'static) {
+    pub fn run_window(event_callback: impl Fn(&mut Pixels, &mut WinitInputHelper, &mut ControlFlow) + 'static) {
         // TODO: don't be silent about errors, that's unhealthy
 
         env_logger::init();
@@ -71,7 +74,7 @@ mod misc {
                 window.request_redraw();
             }
 
-            event_callback(&mut input, control_flow);
+            event_callback(&mut pixels, &mut input, control_flow);
         });
     }
 }
