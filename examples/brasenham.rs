@@ -5,7 +5,7 @@ use pygmalion::{
 };
 
 fn main() {
-    run_window(|mut frame| {
+    run_window(Default::default(), |mut frame| {
         frame.clear();
 
         if frame.input.key_pressed(VirtualKeyCode::Escape) {
@@ -35,7 +35,8 @@ fn main() {
                 .iter()
                 .cloned()
                 .max()
-                .unwrap_or_default() as u32 / 2,
+                .unwrap_or_default() as u32
+                / 2,
             yellow,
         )
     });

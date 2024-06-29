@@ -76,19 +76,37 @@ mod misc {
 
     use crate::FrameState;
 
-    const WIDTH: u32 = 320;
-    const HEIGHT: u32 = 240;
+    #[derive(Debug, Clone, Copy, Hash)]
+    pub struct WindowConfiguration<'title> {
+        pub initial_size: Vector2<u32>,
+        pub title: &'title str,
+    }
 
-    pub fn run_window(event_callback: impl Fn(FrameState<'_, '_, '_>) + 'static) {
+    impl Default for WindowConfiguration<'static> {
+        fn default() -> Self {
+            const WIDTH: u32 = 320;
+            const HEIGHT: u32 = 240;
+
+            Self {
+                initial_size: Vector2::from([WIDTH, HEIGHT]),
+                title: "",
+            }
+        }
+    }
+
+    pub fn run_window(
+        config: WindowConfiguration<'_>,
+        event_callback: impl Fn(FrameState<'_, '_, '_>) + 'static,
+    ) {
         // TODO: don't be silent about errors, that's unhealthy
 
         env_logger::init();
         let event_loop = EventLoop::new();
         let mut input = WinitInputHelper::new();
         let window = {
-            let size = LogicalSize::new(WIDTH as f64, HEIGHT as f64);
+            let size = LogicalSize::new(config.initial_size.x as f32, config.initial_size.y as f32);
             WindowBuilder::new()
-                .with_title("Hello Pixels")
+                .with_title(config.title)
                 .with_inner_size(size)
                 .with_min_inner_size(size)
                 .build(&event_loop)
