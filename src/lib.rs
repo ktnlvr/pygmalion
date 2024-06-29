@@ -12,7 +12,16 @@ pub mod window {
 
 pub use draw::*;
 
+pub struct FrameState<'pixels, 'input, 'control> {
+    pub pixels: &'pixels mut Pixels,
+    pub input: &'input mut WinitInputHelper,
+    pub control_flow: &'control mut ControlFlow,
+
+    pub dimensions: mint::Vector2<u32>,
+}
+
 mod misc {
+    use mint::Vector2;
     use pixels::{Pixels, PixelsBuilder, SurfaceTexture};
     use winit::{
         dpi::LogicalSize,
@@ -22,10 +31,12 @@ mod misc {
     };
     use winit_input_helper::WinitInputHelper;
 
+    use crate::FrameState;
+
     const WIDTH: u32 = 320;
     const HEIGHT: u32 = 240;
     
-    pub fn run_window(event_callback: impl Fn(&mut Pixels, &mut WinitInputHelper, &mut ControlFlow) + 'static) {
+    pub fn run_window(event_callback: impl Fn(FrameState<'_, '_, '_>) + 'static) {
         // TODO: don't be silent about errors, that's unhealthy
 
         env_logger::init();
@@ -41,11 +52,15 @@ mod misc {
                 .unwrap()
         };
 
+        let scalar = 4;
+        let width = 16 * scalar;
+        let height = 16 * scalar;
+
         let mut pixels = {
             let window_size = window.inner_size();
             let surface_texture =
                 SurfaceTexture::new(window_size.width, window_size.height, &window);
-            PixelsBuilder::new(16 * 4, 9 * 4, surface_texture)
+            PixelsBuilder::new(width, height, surface_texture)
                 .build()
                 .unwrap()
         };
@@ -74,9 +89,19 @@ mod misc {
                 window.request_redraw();
             }
 
-            event_callback(&mut pixels, &mut input, control_flow);
+            let state = FrameState {
+                pixels: &mut pixels,
+                input: &mut input,
+                control_flow,
+                dimensions: Vector2::from([width, height]),
+            };
+
+            event_callback(state);
         });
     }
 }
 
 pub use misc::run_window;
+use pixels::Pixels;
+use winit::event_loop::ControlFlow;
+use winit_input_helper::WinitInputHelper;
