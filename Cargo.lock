@@ -241,6 +241,9 @@ name = "cint"
 version = "0.3.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7a0e87cdf78571d9fbeff16861c37a006cd718d2433dc6d5b80beaae367d899a"
+dependencies = [
+ "bytemuck",
+]
 
 [[package]]
 name = "codespan-reporting"
@@ -1023,6 +1026,7 @@ checksum = "43d84d1d7a6ac92673717f9f6d1518374ef257669c24ebc5ac25d5033828be58"
 name = "pygmalion"
 version = "0.1.0"
 dependencies = [
+ "bytemuck",
  "cint",
  "env_logger",
  "log",

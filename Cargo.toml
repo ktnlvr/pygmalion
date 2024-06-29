@@ -9,5 +9,6 @@ env_logger = "0.10"
 log = "0.4"
 winit = "0.28"
 winit_input_helper = "0.14"
-cint = "0.3.1"
+cint = { version = "0.3.1", features = [ "bytemuck" ] }
 mint = "0.5.9"
+bytemuck = "1.16.1"

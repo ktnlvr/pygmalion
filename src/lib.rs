@@ -20,9 +20,44 @@ pub struct FrameState<'pixels, 'input, 'control> {
     pub dimensions: mint::Vector2<u32>,
 }
 
+impl FrameState<'_, '_, '_> {
+    pub fn get(&self, position: impl Into<Vec2>) -> &[u8; 4] {
+        let position = position.into();
+        let x = position.x;
+        let y = position.y;
+
+        let i = 4 * (y as u32 * self.dimensions.y + x as u32) as usize;
+
+        self.pixels.frame()[i..i + 4].try_into().unwrap()
+    }
+
+    pub fn get_mut(&mut self, position: impl Into<Vec2>) -> &mut [u8; 4] {
+        let position = position.into();
+        let x = position.x;
+        let y = position.y;
+
+        let i = 4 * (y as u32 * self.dimensions.y + x as u32) as usize;
+
+        (&mut self.pixels.frame_mut()[i..i + 4]).try_into().unwrap()
+    }
+
+    pub fn clear(&mut self) {
+        self.pixels.frame_mut().fill(0x00);
+    }
+
+    pub fn mouse_position(&self) -> [i32; 2] {
+        let (x, y) = self
+            .pixels
+            .window_pos_to_pixel(self.input.mouse().unwrap_or_default())
+            .unwrap_or_default();
+
+        [x as i32, y as i32]
+    }
+}
+
 mod misc {
     use mint::Vector2;
-    use pixels::{Pixels, PixelsBuilder, SurfaceTexture};
+    use pixels::{PixelsBuilder, SurfaceTexture};
     use winit::{
         dpi::LogicalSize,
         event::Event,
@@ -35,7 +70,7 @@ mod misc {
 
     const WIDTH: u32 = 320;
     const HEIGHT: u32 = 240;
-    
+
     pub fn run_window(event_callback: impl Fn(FrameState<'_, '_, '_>) + 'static) {
         // TODO: don't be silent about errors, that's unhealthy
 
