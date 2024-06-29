@@ -35,3 +35,55 @@ pub fn line(
         }
     }
 }
+
+pub fn circle(
+    frame: &mut FrameState,
+    center: impl Into<Vec2>,
+    radius: u32,
+    callback: impl Fn(&mut FrameState, Vec2),
+) {
+    let center = center.into();
+
+    let mut err = -(radius as i32);
+    let mut x = radius as i32;
+    let mut y = 0;
+
+    callback(frame, [center.x, center.y - radius as i32].into());
+
+    while x >= y {
+        callback(frame, [center.x + x, center.y + y].into());
+        if x != y {
+            callback(frame, [center.x + y, center.y + x].into());
+        }
+
+        if x != 0 {
+            callback(frame, [center.x - x, center.y + y].into());
+            if x != y {
+                callback(frame, [center.x - y, center.y + x].into());
+            }
+        }
+
+        if y != 0 {
+            callback(frame, [center.x + x, center.y - y].into());
+            if x != y {
+                callback(frame, [center.x + y, center.y - x].into());
+            }
+        }
+
+        if x != 0 && y != 0 {
+            callback(frame, [center.x - x, center.y - y].into());
+            if x != y {
+                callback(frame, [center.x - y, center.y - x].into());
+            }
+        }
+
+        err += y;
+        y += 1;
+        err += y;
+
+        if err >= 0 {
+            x -= 1;
+            err -= 2 * x;
+        }
+    }
+}

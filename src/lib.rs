@@ -21,6 +21,14 @@ pub struct FrameState<'pixels, 'input, 'control> {
 }
 
 impl FrameState<'_, '_, '_> {
+    pub fn is_inside(&self, position: impl Into<Vec2>) -> bool {
+        let pos = position.into();
+        pos.x >= 0
+            && pos.y >= 0
+            && pos.x < self.dimensions.x as i32
+            && pos.y < self.dimensions.y as i32
+    }
+
     pub fn get(&self, position: impl Into<Vec2>) -> &[u8; 4] {
         let position = position.into();
         let x = position.x;
