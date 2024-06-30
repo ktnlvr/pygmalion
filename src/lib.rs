@@ -29,6 +29,13 @@ impl FrameState<'_, '_, '_> {
             && pos.y < self.dimensions.y as i32
     }
 
+    pub fn put(&mut self, position: impl Into<Vec2>, color: [u8; 3]) {
+        let target_color = self.get_mut(position);
+        target_color[0] = color[0];
+        target_color[1] = color[1];
+        target_color[2] = color[2];
+    }
+
     pub fn get(&self, position: impl Into<Vec2>) -> &[u8; 4] {
         let position = position.into();
         let x = position.x;

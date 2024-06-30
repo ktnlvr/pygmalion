@@ -19,11 +19,7 @@ fn main() {
                 return;
             }
 
-            let color = frame.get_mut(p);
-            color[0] = 0xFF;
-            color[1] = 0xFF;
-            color[2] = 0x00;
-            color[3] = 0xFF;
+            frame.put(p, [0xFF, 0xFF, 0x00]);
         };
 
         line(&mut frame, [0, 0], mouse_pos, yellow);
